@@ -45,5 +45,5 @@ export const login = async ({
 };
 
 export const logout = async (token: string) => {
-    await cacheToken(token);
+    await cacheToken(token); 
 };

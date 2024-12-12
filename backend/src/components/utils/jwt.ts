@@ -30,6 +30,8 @@ export const decodeToken = (token: string) => {
     return jwt.verify(token, JWT_SECRET);
 };
 
+export const generateKey = (token: string) => `token:${token}`;
+
 export const cacheToken = async (token: string) => {
     const expiresIn = jwt.decode(token) as JwtPayload;
     const { exp } = expiresIn;
@@ -41,7 +43,10 @@ export const cacheToken = async (token: string) => {
     }
 
     const timeLeft = exp * 1000 - Date.now(); // Convert exp to milliseconds before subtracting
-    const key = `token:${uidv4()}`;
 
-    await cache.set({ key, value: token, expiresIn: timeLeft });
+    await cache.set({
+        key: generateKey(token),
+        value: uidv4(),
+        expiresIn: timeLeft,
+    });
 };
