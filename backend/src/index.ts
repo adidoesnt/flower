@@ -1,6 +1,6 @@
 import express from "express";
 import { json, urlencoded } from "body-parser";
-import { router } from "router";
+import { router } from "components/router";
 
 const { PORT = 8080 } = process.env;
 const app = express();

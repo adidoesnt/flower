@@ -1,3 +1,4 @@
+import type { InferInsertModel } from "drizzle-orm";
 import {
     pgTable,
     integer,
@@ -17,7 +18,7 @@ export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     username: varchar({ length: 16 }).notNull().unique(),
     email: varchar({ length: 255 }).notNull().unique(),
-    password_hash: varchar({ length: 255 }).notNull(),
+    password: varchar({ length: 255 }).notNull(), // NOTE: This is a hashed password
     created_at: timestamp().notNull().defaultNow(),
     last_updated_at: timestamp().notNull().defaultNow(),
 });
