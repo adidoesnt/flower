@@ -57,7 +57,9 @@ export const todosTable = pgTable("todos", {
         Status.TODO,
         Status.IN_PROGRESS,
         Status.COMPLETED,
-    ])(),
+    ])()
+        .notNull()
+        .default(Status.TODO),
     created_at: timestamp().notNull().defaultNow(),
     last_updated_at: timestamp().notNull().defaultNow(),
 });
