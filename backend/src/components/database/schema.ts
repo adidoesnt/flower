@@ -4,6 +4,7 @@ import {
     varchar,
     timestamp,
     pgEnum,
+    boolean,
 } from "drizzle-orm/pg-core";
 
 export enum Status {
@@ -84,6 +85,19 @@ export const commentsTable = pgTable("comments", {
         .notNull()
         .references(() => usersTable.id),
     content: varchar({ length: 255 }).notNull(),
+    created_at: timestamp().notNull().defaultNow(),
+    last_updated_at: timestamp().notNull().defaultNow(),
+});
+
+export const notificationsTable = pgTable("notifications", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    user_id: integer()
+        .notNull()
+        .references(() => usersTable.id),
+    title: varchar({ length: 255 }).notNull(),
+    content: varchar({ length: 255 }).notNull(),
+    href: varchar({ length: 1000 }).notNull(),
+    read: boolean().notNull().default(false),
     created_at: timestamp().notNull().defaultNow(),
     last_updated_at: timestamp().notNull().defaultNow(),
 });
