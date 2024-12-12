@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { ZodIssue } from "zod";
 
 export type ResponseError = Error & {
-    status: number;
+    status?: number;
     issues?: ZodIssue[];
 };
 
