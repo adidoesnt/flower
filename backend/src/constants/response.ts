@@ -15,6 +15,10 @@ export const RES = {
         CODE: 401,
         MESSAGE: "Unauthorized",
     },
+    FORBIDDEN: {
+        CODE: 403,
+        MESSAGE: "Forbidden",
+    },
     NOT_FOUND: {
         CODE: 404,
         MESSAGE: "Not Found",

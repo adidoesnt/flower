@@ -10,8 +10,10 @@ export const handleError = (
     e: Error,
     _req: Request,
     res: Response,
-    _next: NextFunction
+    next: NextFunction
 ) => {
+    if (!e) return next();
+
     const error = e as ResponseError;
     const status = error.status ?? 500;
     return res.status(status).json({ error: error.issues ?? error.message });

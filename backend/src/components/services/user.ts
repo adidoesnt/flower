@@ -1,7 +1,7 @@
 import type { ResponseError } from "components/middleware/error";
 import { userRepository } from "components/repositories";
 import type { User } from "components/repositories/user";
-import { generateToken } from "components/utils/jwt";
+import { cacheToken, generateToken } from "components/utils/jwt";
 import { SALT_ROUNDS } from "constants/hash";
 import { RES } from "constants/response";
 
@@ -42,4 +42,8 @@ export const login = async ({
 
     const { password: _password, ...rest } = user;
     return { ...rest, token };
+};
+
+export const logout = async (token: string) => {
+    await cacheToken(token);
 };

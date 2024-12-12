@@ -42,3 +42,18 @@ export const login = async ({ req, res, next }: ControllerProps) => {
         next(error);
     }
 };
+
+export const logout = async ({ req, res, next }: ControllerProps) => {
+    const token = req.cookies.token;
+
+    try {
+        await userService.logout(token);
+        return res.clearCookie("token").status(OK.CODE).json({
+            message: "Logged out successfully",
+        });
+    } catch (e) {
+        const error = e as ResponseError;
+        error.status = BAD_REQUEST.CODE;
+        next(error);
+    }
+};
