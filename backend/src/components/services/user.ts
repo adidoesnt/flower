@@ -1,6 +1,7 @@
 import type { ResponseError } from "components/middleware/error";
 import { userRepository } from "components/repositories";
 import type { User } from "components/repositories/user";
+import { generateToken } from "components/utils/jwt";
 import { SALT_ROUNDS } from "constants/hash";
 import { RES } from "constants/response";
 
@@ -37,6 +38,8 @@ export const login = async ({
         throw error;
     }
 
+    const token = generateToken(user);
+
     const { password: _password, ...rest } = user;
-    return rest;
+    return { ...rest, token };
 };
