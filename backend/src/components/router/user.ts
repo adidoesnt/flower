@@ -1,12 +1,6 @@
 import { userController } from "components/controllers";
 import { authorise } from "components/middleware/auth";
-import { handleError } from "components/middleware/error";
-import {
-    Router,
-    type NextFunction,
-    type Request,
-    type Response,
-} from "express";
+import { Router } from "express";
 
 const userRouter = Router();
 

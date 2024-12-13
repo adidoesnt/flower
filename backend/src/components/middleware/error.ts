@@ -1,5 +1,8 @@
+import { RES } from "constants/response";
 import type { NextFunction, Request, Response } from "express";
-import type { ZodIssue } from "zod";
+import { ZodError, type ZodIssue } from "zod";
+
+const { BAD_REQUEST, INTERNAL_SERVER_ERROR } = RES;
 
 export type ResponseError = Error & {
     status?: number;
@@ -15,6 +18,11 @@ export const handleError = (
     if (!e) return next();
 
     const error = e as ResponseError;
-    const status = error.status ?? 500;
+
+    if (e instanceof ZodError) {
+        error.status = BAD_REQUEST.CODE;
+    }
+
+    const status = error.status ?? INTERNAL_SERVER_ERROR.CODE;
     return res.status(status).json({ error: error.issues ?? error.message });
 };

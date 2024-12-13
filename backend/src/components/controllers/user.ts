@@ -36,9 +36,7 @@ export const login = async ({ req, res, next }: ControllerProps) => {
             password,
         });
         return res.cookie("token", token).status(OK.CODE).json(user);
-    } catch (e) {
-        const error = e as ResponseError;
-        error.status = BAD_REQUEST.CODE;
+    } catch (error) {
         next(error);
     }
 };
@@ -51,9 +49,7 @@ export const logout = async ({ req, res, next }: ControllerProps) => {
         return res.clearCookie("token").status(OK.CODE).json({
             message: "Logged out successfully",
         });
-    } catch (e) {
-        const error = e as ResponseError;
-        error.status = BAD_REQUEST.CODE;
+    } catch (error) {
         next(error);
     }
 };
