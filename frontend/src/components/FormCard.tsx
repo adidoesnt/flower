@@ -26,6 +26,7 @@ import { toFirstLetterUpperCase } from "@/utils/string";
 type ButtonProps = {
     label: string;
     onClick: () => void;
+    className?: string;
 };
 
 type FormCardProps = {
@@ -112,14 +113,14 @@ export const FormCard = ({
                 {buttons.cancel && (
                     <Button
                         onClick={buttons.cancel?.onClick}
-                        className={"bg-bg-200 text-primary-900"}
+                        className={buttons.cancel?.className}
                     >
                         {buttons.cancel?.label}
                     </Button>
                 )}
                 <Button
                     onClick={buttons.submit.onClick}
-                    className={"bg-bg-800 text-primary-000"}
+                    className={buttons.submit.className}
                 >
                     {buttons.submit.label}
                 </Button>
