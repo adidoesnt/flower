@@ -25,8 +25,11 @@ export const ThemeProvider = ({
         const storedTheme = localStorage.getItem(storageKey);
         if (storedTheme) {
             setTheme(storedTheme as Theme);
+        } else {
+            setTheme(defaultTheme);
+            localStorage.setItem(storageKey, defaultTheme);
         }
-    }, [storageKey, setTheme]);
+    }, [storageKey, setTheme, defaultTheme]);
 
     const setThemeState = (newTheme: Theme) => {
         setTheme(newTheme);
