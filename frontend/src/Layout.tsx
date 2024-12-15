@@ -1,5 +1,4 @@
 import { useTheme } from "./hooks/useTheme";
-
 function Layout({ children }: { children?: React.ReactNode }) {
     const { theme } = useTheme();
 
