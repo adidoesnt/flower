@@ -5,7 +5,7 @@ import { z } from "zod";
 function LoginPage() {
   const loginSchema = useMemo(() => {
     return z.object({
-      username: z.string().email(),
+      username: z.string(),
       password: z.string(),
     });
   }, []);
@@ -28,7 +28,7 @@ function LoginPage() {
   return (
     <div className="flex flex-col w-[100dvw] h-[100dvh] items-center justify-center">
       <FormCard
-        className={"flex flex-col justify-center items-start p-4 w-1/2"}
+        className={"flex flex-col justify-center items-start p-4"}
         title="Login"
         description="Please enter your credentials to login"
         zodSchema={loginSchema}
@@ -37,10 +37,12 @@ function LoginPage() {
           submit: {
             label: "Log In",
             onClick: onLoginClick,
+            className: 'w-1/3'
           },
           cancel: {
             label: "Sign Up",
             onClick: onSignupClick,
+            className: 'w-1/3 bg-bg-000 text-primary-900 hover:bg-bg-200'
           },
         }}
       />

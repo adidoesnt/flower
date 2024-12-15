@@ -70,13 +70,13 @@ export const FormCard = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      {description && <CardDescription>{description}</CardDescription>}
-      <CardContent>
+      <CardContent className="w-full">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(buttons.submit.onClick)}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-4 w-full"
           >
             {fields.map(([key, value]) => {
               const fieldName = toFirstLetterUpperCase(key);
@@ -104,7 +104,7 @@ export const FormCard = ({
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between gap-8 w-full">
         {buttons.cancel && (
           <Button
             onClick={buttons.cancel?.onClick}
