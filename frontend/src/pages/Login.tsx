@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 import { z } from "zod";
 
 function LoginPage() {
+  // TODO: move this to shared libs
   const loginSchema = useMemo(() => {
     return z.object({
       username: z.string(),
