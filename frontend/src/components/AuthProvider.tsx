@@ -1,5 +1,6 @@
 import { AuthContext } from "@/context/authContext";
 import apiClient from "@/utils/apiClient";
+import { AxiosError } from "axios";
 import { useCallback, useMemo, useState } from "react";
 
 type AuthProviderProps = {
@@ -29,28 +30,60 @@ export type User = {
 export type AuthProviderState = {
   user: User | null;
   isLoggedIn: boolean;
-  login: ({ username, password }: LoginParams) => void;
+  login: (setError: (msg: string | null) => void, params: LoginParams) => void;
   logout: () => void;
-  signup: ({ email, username, password }: SignupParams) => void;
+  signup: (
+    setError: (msg: string | null) => void,
+    params: SignupParams,
+  ) => void;
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
+  const getLoginErrorMessage = useCallback((status: number) => {
+    switch (status) {
+      case 401:
+        return "Incorrect password";
+      case 404:
+        return "User not found";
+      default:
+        return "An error occurred, please try again later";
+    }
+  }, []);
+
+  // TODO: duplicate username currently returns 400, change to 409
+  const getSignupErrorMessage = useCallback((status: number) => {
+    switch (status) {
+      case 409:
+        return "User already exists";
+      default:
+        return "An error occurred, please try again later";
+    }
+  }, []);
+
   const login = useCallback(
-    async ({ username, password }: LoginParams) => {
+    async (
+      setError: (msg: string | null) => void,
+      { username, password }: LoginParams,
+    ) => {
       try {
+        setError(null);
         const response = await apiClient.post("/users/login", {
           username: username,
           password: password,
         });
         const fetchedUser = response.data as User;
         setUser(fetchedUser);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        const error = e as AxiosError;
+        const status = error.response?.status ?? 500;
+        const errorMessage = getLoginErrorMessage(status);
+        console.error(error);
+        setError(errorMessage);
       }
     },
-    [setUser],
+    [setUser, getLoginErrorMessage],
   );
 
   const logout = useCallback(() => {
@@ -58,8 +91,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [setUser]);
 
   const signup = useCallback(
-    async ({ email, username, password }: SignupParams) => {
+    async (
+      setError: (msg: string | null) => void,
+      { email, username, password }: SignupParams,
+    ) => {
       try {
+        setError(null);
         const response = await apiClient.post("/users/signup", {
           email,
           username,
@@ -67,11 +104,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         });
         const fetchedUser = response.data as User;
         setUser(fetchedUser);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        const error = e as AxiosError;
+        const status = error.response?.status ?? 500;
+        const errorMessage = getSignupErrorMessage(status);
+        console.error(error);
+        setError(errorMessage);
       }
     },
-    [setUser],
+    [setUser, getSignupErrorMessage],
   );
 
   const isLoggedIn = useMemo(() => !!user, [user]);

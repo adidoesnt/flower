@@ -47,20 +47,20 @@ function LoginPage({ isSignup }: LoginPageProps) {
   );
 
   const onLoginClick = useCallback(
-    (params: LoginParams) => {
+    (setFormError: (msg: string | null) => void, params: LoginParams) => {
       if (isSignup && location !== "/login") {
         redirect("/login");
       } else {
-        login(params);
+        login(setFormError, params);
       }
     },
     [isSignup, login, redirect, location],
   );
 
   const onSignupClick = useCallback(
-    (params: SignupParams) => {
+    (setFormError: (msg: string | null) => void, params: SignupParams) => {
       if (isSignup) {
-        signup(params);
+        signup(setFormError, params);
       } else if (location !== "/signup") {
         redirect("/signup");
       }

@@ -19,9 +19,10 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Input } from "./ui/input";
 import { toFirstLetterUpperCase } from "@/utils/string";
+import { Badge } from "./ui/badge";
 
 export type ButtonProps = {
   label: string;
@@ -66,6 +67,8 @@ export const FormCard = ({
     defaultValues,
   });
 
+  const [formError, setFormError] = useState<string | null>(null);
+
   const fields = useMemo(
     () => Object.entries(zodSchema._def.shape()),
     [zodSchema],
@@ -84,7 +87,7 @@ export const FormCard = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(
-            buttons.primary.onClick.bind(null, payload),
+            buttons.primary.onClick.bind(null, setFormError, payload),
           )}
           className="flex flex-col gap-4 w-full"
         >
@@ -121,6 +124,11 @@ export const FormCard = ({
                 />
               );
             })}
+            {formError && (
+              <Badge className="flex text-red-500 w-fit bg-bg-000 border-red-500 justify-start hover:bg-bg-000">
+                {formError}
+              </Badge>
+            )}
           </CardContent>
           <CardFooter className="flex justify-between gap-8 w-full">
             {buttons.secondary && (

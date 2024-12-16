@@ -6,9 +6,12 @@ import { createContext } from "react";
 export const initialState: AuthProviderState = {
   isLoggedIn: false,
   user: null,
-  login: (_params: Record<string, any>) => {},
+  login: (_setError: (msg: string) => void, _params: Record<string, any>) => {},
   logout: () => {},
-  signup: (_params: Record<string, any>) => {},
+  signup: (
+    _setError: (msg: string) => void,
+    _params: Record<string, any>,
+  ) => {},
 };
 
 export const AuthContext = createContext<AuthProviderState>(initialState);
