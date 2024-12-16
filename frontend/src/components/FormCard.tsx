@@ -9,7 +9,7 @@ import {
 import { Button } from "./ui/button";
 import { z, ZodTypeAny } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { ControllerRenderProps, useForm } from "react-hook-form";
 import {
   Form,
   FormField,
@@ -23,10 +23,15 @@ import { useMemo } from "react";
 import { Input } from "./ui/input";
 import { toFirstLetterUpperCase } from "@/utils/string";
 
-type ButtonProps = {
+export type ButtonProps = {
   label: string;
   onClick: () => void;
   className?: string;
+};
+
+export type FormCardButtons = {
+  primary: ButtonProps;
+  secondary?: ButtonProps;
 };
 
 type FormCardProps = {
@@ -34,10 +39,7 @@ type FormCardProps = {
   description?: string;
   zodSchema: z.ZodTypeAny;
   defaultValues: z.infer<FormCardProps["zodSchema"]>;
-  buttons: {
-    submit: ButtonProps;
-    cancel?: ButtonProps;
-  };
+  buttons: FormCardButtons;
   className?: string;
 };
 
@@ -47,6 +49,8 @@ type ZodFieldType = {
     typeName: ZodTypeAny;
   };
 };
+
+type PasswordField = ControllerRenderProps & { type: string };
 
 export const FormCard = ({
   title,
@@ -75,7 +79,7 @@ export const FormCard = ({
       <CardContent className="w-full">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(buttons.submit.onClick)}
+            onSubmit={form.handleSubmit(buttons.primary.onClick)}
             className="flex flex-col gap-4 w-full"
           >
             {fields.map(([key, value]) => {
@@ -88,16 +92,21 @@ export const FormCard = ({
                   key={key}
                   name={fieldName}
                   control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{fieldName}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={fieldName} {...field} />
-                      </FormControl>
-                      <FormDescription>{description}</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const isPassword = key === "password";
+                    if (isPassword) (field as PasswordField).type = "password";
+
+                    return (
+                      <FormItem>
+                        <FormLabel>{fieldName}</FormLabel>
+                        <FormControl>
+                          <Input placeholder={fieldName} {...field} />
+                        </FormControl>
+                        <FormDescription>{description}</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
               );
             })}
@@ -105,19 +114,19 @@ export const FormCard = ({
         </Form>
       </CardContent>
       <CardFooter className="flex justify-between gap-8 w-full">
-        {buttons.cancel && (
+        {buttons.secondary && (
           <Button
-            onClick={buttons.cancel?.onClick}
-            className={buttons.cancel?.className}
+            onClick={buttons.secondary?.onClick}
+            className={buttons.secondary?.className}
           >
-            {buttons.cancel?.label}
+            {buttons.secondary?.label}
           </Button>
         )}
         <Button
-          onClick={buttons.submit.onClick}
-          className={buttons.submit.className}
+          onClick={buttons.primary.onClick}
+          className={buttons.primary.className}
         >
-          {buttons.submit.label}
+          {buttons.primary.label}
         </Button>
       </CardFooter>
     </Card>

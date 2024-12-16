@@ -1,8 +1,17 @@
-import { FormCard } from "@/components/FormCard";
+import { ButtonProps, FormCard, FormCardButtons } from "@/components/FormCard";
+import { useAuth } from "@/hooks/useAuth";
 import { useCallback, useMemo } from "react";
+import { useLocation } from "wouter";
 import { z } from "zod";
 
-function LoginPage() {
+type LoginPageProps = {
+  isSignup?: boolean;
+};
+
+function LoginPage({ isSignup }: LoginPageProps) {
+  const [location, setLocation] = useLocation();
+  const { login, signup } = useAuth();
+
   // TODO: move this to shared libs
   const loginSchema = useMemo(() => {
     return z.object({
@@ -11,41 +20,84 @@ function LoginPage() {
     });
   }, []);
 
+  // TODO: move this to shared libs
+  const signupSchema = useMemo(() => {
+    return z.object({
+      email: z.string().email(),
+      username: z.string(),
+      password: z.string(),
+    });
+  }, []);
+
   const defaultValues = useMemo(() => {
-    return {
+    const values: Record<string, string> = {
       username: "",
       password: "",
     };
-  }, []);
+
+    if (isSignup) values.email = "";
+  }, [isSignup]);
+
+  const redirect = useCallback(
+    (href: string) => {
+      setLocation(href);
+    },
+    [setLocation],
+  );
 
   const onLoginClick = useCallback(() => {
-    console.log("login");
-  }, []);
+    if (isSignup && location !== "/login") {
+      redirect("/login");
+    } else {
+      login();
+    }
+  }, [isSignup, login, redirect, location]);
 
   const onSignupClick = useCallback(() => {
-    console.log("signup");
-  }, []);
+    if (isSignup) {
+      signup();
+    } else if (location !== "/signup") {
+      redirect("/signup");
+    }
+  }, [isSignup, signup, redirect, location]);
+
+  const buttons = useMemo(() => {
+    const buttons: Partial<FormCardButtons> = {};
+
+    const signupButton = {
+      label: "Sign Up",
+      onClick: onSignupClick,
+    } satisfies ButtonProps;
+
+    const loginButton = {
+      label: "Log In",
+      onClick: onLoginClick,
+    } satisfies ButtonProps;
+
+    if (isSignup) {
+      buttons.primary = signupButton;
+      buttons.secondary = loginButton;
+    } else {
+      buttons.primary = loginButton;
+      buttons.secondary = signupButton;
+    }
+
+    buttons.secondary.className =
+      "w-1/3 bg-bg-000 text-primary-900 hover:bg-bg-200";
+    buttons.primary.className = "w-1/3";
+
+    return buttons;
+  }, [isSignup, onLoginClick, onSignupClick]);
 
   return (
     <div className="flex flex-col w-[100dvw] h-[100dvh] items-center justify-center">
       <FormCard
-        className={"flex flex-col justify-center items-start p-4"}
-        title="Login"
-        description="Please enter your credentials to login"
-        zodSchema={loginSchema}
+        className={"flex flex-col justify-center items-start p-4 min-w-[400px]"}
+        title={isSignup ? "Sign Up" : "Log In"}
+        description={isSignup ? "Create an account" : "Log in to your account"}
+        zodSchema={isSignup ? signupSchema : loginSchema}
         defaultValues={defaultValues}
-        buttons={{
-          submit: {
-            label: "Log In",
-            onClick: onLoginClick,
-            className: 'w-1/3'
-          },
-          cancel: {
-            label: "Sign Up",
-            onClick: onSignupClick,
-            className: 'w-1/3 bg-bg-000 text-primary-900 hover:bg-bg-200'
-          },
-        }}
+        buttons={buttons as FormCardButtons}
       />
     </div>
   );

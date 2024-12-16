@@ -3,19 +3,17 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import Layout from "./Layout.tsx";
 import { ThemeProvider } from "./components/ThemeProvider.tsx";
-import { BrowserRouter, Route, Routes } from "react-router";
-import LoginPage from "./pages/Login.tsx";
+import { Router } from "./components/Router.tsx";
+import { AuthProvider } from "./components/AuthProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="theme">
+    <ThemeProvider defaultTheme="dark" storageKey="theme">
+      <AuthProvider>
         <Layout>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-          </Routes>
+          <Router />
         </Layout>
-      </ThemeProvider>
-    </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );
