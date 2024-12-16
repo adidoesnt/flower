@@ -1,3 +1,4 @@
+import { LoginParams, SignupParams } from "@/components/AuthProvider";
 import { ButtonProps, FormCard, FormCardButtons } from "@/components/FormCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useCallback, useMemo } from "react";
@@ -45,21 +46,27 @@ function LoginPage({ isSignup }: LoginPageProps) {
     [setLocation],
   );
 
-  const onLoginClick = useCallback(() => {
-    if (isSignup && location !== "/login") {
-      redirect("/login");
-    } else {
-      login();
-    }
-  }, [isSignup, login, redirect, location]);
+  const onLoginClick = useCallback(
+    (params: LoginParams) => {
+      if (isSignup && location !== "/login") {
+        redirect("/login");
+      } else {
+        login(params);
+      }
+    },
+    [isSignup, login, redirect, location],
+  );
 
-  const onSignupClick = useCallback(() => {
-    if (isSignup) {
-      signup();
-    } else if (location !== "/signup") {
-      redirect("/signup");
-    }
-  }, [isSignup, signup, redirect, location]);
+  const onSignupClick = useCallback(
+    (params: SignupParams) => {
+      if (isSignup) {
+        signup(params);
+      } else if (location !== "/signup") {
+        redirect("/signup");
+      }
+    },
+    [isSignup, signup, redirect, location],
+  );
 
   const buttons = useMemo(() => {
     const buttons: Partial<FormCardButtons> = {};

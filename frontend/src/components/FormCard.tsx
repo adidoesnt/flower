@@ -25,7 +25,8 @@ import { toFirstLetterUpperCase } from "@/utils/string";
 
 export type ButtonProps = {
   label: string;
-  onClick: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick: (...args: any[]) => void | ((...args: any[]) => Promise<void>);
   className?: string;
 };
 
@@ -70,6 +71,14 @@ export const FormCard = ({
     [zodSchema],
   );
 
+  const values = form.watch();
+
+  const payload = useMemo(() => {
+    const result: Record<string, unknown> = {};
+    Object.entries(values).forEach(([key, value]) => (result[key] = value));
+    return result;
+  }, [values]);
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -90,7 +99,7 @@ export const FormCard = ({
               return (
                 <FormField
                   key={key}
-                  name={fieldName}
+                  name={key}
                   control={form.control}
                   render={({ field }) => {
                     const isPassword = key === "password";
@@ -123,7 +132,7 @@ export const FormCard = ({
           </Button>
         )}
         <Button
-          onClick={buttons.primary.onClick}
+          onClick={buttons.primary.onClick.bind(null, payload)}
           className={buttons.primary.className}
         >
           {buttons.primary.label}
