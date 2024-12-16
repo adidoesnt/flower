@@ -81,16 +81,18 @@ export const FormCard = ({
 
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
-      </CardHeader>
-      <CardContent className="w-full">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(buttons.primary.onClick)}
-            className="flex flex-col gap-4 w-full"
-          >
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(
+            buttons.primary.onClick.bind(null, payload),
+          )}
+          className="flex flex-col gap-4 w-full"
+        >
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            {description && <CardDescription>{description}</CardDescription>}
+          </CardHeader>
+          <CardContent className="w-full">
             {fields.map(([key, value]) => {
               const fieldName = toFirstLetterUpperCase(key);
               const typedValue = value as ZodFieldType;
@@ -119,25 +121,22 @@ export const FormCard = ({
                 />
               );
             })}
-          </form>
-        </Form>
-      </CardContent>
-      <CardFooter className="flex justify-between gap-8 w-full">
-        {buttons.secondary && (
-          <Button
-            onClick={buttons.secondary?.onClick}
-            className={buttons.secondary?.className}
-          >
-            {buttons.secondary?.label}
-          </Button>
-        )}
-        <Button
-          onClick={buttons.primary.onClick.bind(null, payload)}
-          className={buttons.primary.className}
-        >
-          {buttons.primary.label}
-        </Button>
-      </CardFooter>
+          </CardContent>
+          <CardFooter className="flex justify-between gap-8 w-full">
+            {buttons.secondary && (
+              <Button
+                onClick={buttons.secondary?.onClick}
+                className={buttons.secondary?.className}
+              >
+                {buttons.secondary?.label}
+              </Button>
+            )}
+            <Button type="submit" className={buttons.primary.className}>
+              {buttons.primary.label}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 };
