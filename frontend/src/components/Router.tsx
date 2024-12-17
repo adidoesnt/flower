@@ -9,6 +9,7 @@ const AuthenticatedRoutes = () => {
 const UnauthenticatedRoutes = () => {
   return (
     <>
+      <Route path="/" component={LoginPage.bind(null, { isSignup: false })} />
       <Route
         path="/login"
         component={LoginPage.bind(null, { isSignup: false })}
