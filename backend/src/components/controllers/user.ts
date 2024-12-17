@@ -5,6 +5,8 @@ import { userService } from "components/services";
 import type { ResponseError } from "components/middleware/error";
 import { RES } from "constants/response";
 import { z } from "zod";
+import { getExpiryTimestamp } from "components/utils/jwt";
+import { IS_DEV_ENV } from "constants/server";
 
 const { CREATED, BAD_REQUEST, OK } = RES;
 
@@ -35,7 +37,17 @@ export const login = async ({ req, res, next }: ControllerProps) => {
             username,
             password,
         });
-        return res.cookie("token", token).status(OK.CODE).json(user);
+
+        const expires = getExpiryTimestamp(token);
+
+        return res
+            .cookie("token", token, {
+                httpOnly: true,
+                secure: !IS_DEV_ENV,
+                expires,
+            })
+            .status(OK.CODE)
+            .json(user);
     } catch (error) {
         next(error);
     }

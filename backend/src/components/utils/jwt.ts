@@ -20,6 +20,26 @@ export const generateToken = (
     });
 };
 
+export const getExpiryTimestamp = (token: string) => {
+    if (!JWT_SECRET) {
+        const error: ResponseError = new Error("JWT_SECRET is not set");
+        error.status = RES.INTERNAL_SERVER_ERROR.CODE;
+        throw error;
+    }
+
+    const payload = jwt.decode(token) as JwtPayload;
+    const { exp } = payload;
+
+    if (!exp) {
+        const error: ResponseError = new Error("Token is not valid");
+        error.status = RES.UNAUTHORIZED.CODE;
+        throw error;
+    }
+
+    const date = new Date(exp * 1000);
+    return date;
+};
+
 export const decodeToken = (token: string) => {
     if (!JWT_SECRET) {
         const error: ResponseError = new Error("JWT_SECRET is not set");
